@@ -5,10 +5,12 @@ import { UserModule } from './modules/user/user.module';
 import { UserController } from './modules/user/user.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
     UserModule,
+    ProductsModule,
     AuthModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -20,6 +22,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [__dirname + '/**/*.entity{.ts,.js}'], // Danh sách các entity được ánh xạ
       synchronize: true, // Auto-create/update tables based on entities (use with caution in production)
     }),
+    ProductsModule,
   ],
   controllers: [AppController, UserController],
   providers: [AppService],
