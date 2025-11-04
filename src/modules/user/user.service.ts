@@ -1,5 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+// import { DatabaseService } from 'src/database/database.service';
+import { User } from './user.entity';
+import { Repository } from 'typeorm/browser/repository/Repository.js';
 
 @Injectable()
 // @Injectable({ scope: Scope.REQUEST })
@@ -10,10 +13,43 @@ import { DatabaseService } from 'src/database/database.service';
 //      Request: 1 instance cho mỗi request
 //      Transient: tạo mới instance mỗi khi được inject
 export class UserService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  // constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  getUsers(): number | string {
-    // return `This action returns all users`;
-    return this.databaseService.findAll();
+  // getUsers(): number | string {
+  //   // return `This action returns all users`;
+  //   // return this.databaseService.findAll();
+  // }
+
+  findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
+  findOne(id: number): Promise<User | null> {
+    // return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOneBy({ id });
+  }
+
+  create(user: Partial<User>): Promise<User> {
+    const newUser = this.userRepository.create(user);
+    newUser.createdAt = new Date();
+    newUser.updatedAt = new Date();
+    return this.userRepository.save(newUser);
+  }
+
+  async update(id: number, user: Partial<User>): Promise<User> {
+    await this.userRepository.update(id, user);
+    const updated = await this.findOne(id);
+    if (!updated) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return updated;
+  }
+
+  delete(id: number) {
+    return this.userRepository.delete(id);
   }
 }
