@@ -12,17 +12,22 @@ import {
   ParseIntPipe,
   ArgumentMetadata,
   PipeTransform,
-  Inject,
+  // Inject,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from './product.entity';
 import CreateProductDto from './dtos/create-product-dto';
 // import { ValidationError } from 'class-validator';
 
-export class CustomValidationPipe implements PipeTransform<any> {
+export class CustomProductValidationPipe implements PipeTransform<any> {
+  // Can thiệp – Xử lý – Biến đổi (transform) hoặc Kiểm tra (validate) dữ liệu
   transform(value: any, metadata: ArgumentMetadata) {
-    // Custom transformation and validation logic
-    console.log('Custom ValidationPipe:', metadata);
+    // Value: Dữ liệu đầu vào cần xử lý
+    // VD:   @Body() → body JSON
+    //       @Param('id') → giá trị id trong URL
+    //       @Query() → query string trong URL
+    // Metadata: Thông tin về dữ liệu đầu vào (loại dữ liệu, vị trí dữ liệu,...)
+    console.log('Custom Product ValidationPipe:', metadata);
     return value;
   }
 }
@@ -84,7 +89,10 @@ export class ProductsController {
   // }
 
   @Post()
-  create(@Body(new CustomValidationPipe()) productData: CreateProductDto) {
+  create(
+    @Body(new CustomProductValidationPipe())
+    productData: CreateProductDto,
+  ) {
     return this.productsService.create(productData);
   }
 
