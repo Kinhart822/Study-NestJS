@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './product.entity';
+import { RoleMiddleware } from 'src/middleware/role/role.middleware';
+import { LoggingMiddleware } from 'src/middleware/logging/logging.middleware';
 
 @Module({
   imports: [
@@ -12,4 +14,20 @@ import { Product } from './product.entity';
   controllers: [ProductsController],
   providers: [ProductsService],
 })
-export class ProductsModule {}
+export class ProductsModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggingMiddleware)
+      .forRoutes(
+        {
+          path: '/products/*',
+          method: RequestMethod.ALL,
+        },
+        // Phải thêm chứ không sẽ không bắt được route /products
+        {
+          path: '/products',
+          method: RequestMethod.ALL,
+        },
+      );
+  }
+}
