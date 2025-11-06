@@ -3,17 +3,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { UserController } from './modules/user/user.controller';
-import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './modules/products/products.module';
-import { LoggingMiddleware } from './middleware/logging/logging.middleware';
-import { RoleMiddleware } from './middleware/role/role.middleware';
+// import { LoggingMiddleware } from './middleware/logging/logging.middleware';
+// import { RoleMiddleware } from './middleware/role/role.middleware';
+import { JwtUserModule } from './modules/jwt-user/jwt-user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { LocalStrategy } from './passports/local.strategy';
 
 @Module({
   imports: [
     UserModule,
     ProductsModule,
-    AuthModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -25,24 +26,26 @@ import { RoleMiddleware } from './middleware/role/role.middleware';
       synchronize: true, // Auto-create/update tables based on entities (use with caution in production)
     }),
     ProductsModule,
+    JwtUserModule,
+    AuthModule,
   ],
   controllers: [AppController, UserController],
   providers: [AppService],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggingMiddleware, RoleMiddleware)
-      .forRoutes('*');
-      // .forRoutes(
-      //   {
-      //     path: '/products/*',
-      //     method: RequestMethod.ALL,
-      //   },
-      //   {
-      //     path: '/products',
-      //     method: RequestMethod.ALL,
-      //   },
-      // );
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer
+  //     .apply(LoggingMiddleware, RoleMiddleware)
+  //     .forRoutes('*');
+  // .forRoutes(
+  //   {
+  //     path: '/products/*',
+  //     method: RequestMethod.ALL,
+  //   },
+  //   {
+  //     path: '/products',
+  //     method: RequestMethod.ALL,
+  //   },
+  // );
+  // }
 }

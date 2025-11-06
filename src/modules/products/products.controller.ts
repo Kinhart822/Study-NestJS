@@ -15,12 +15,13 @@ import {
   Inject,
   BadRequestException,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ProductsService } from './products.service';
-import { Product } from './product.entity';
 import CreateProductDto from './dtos/create-product-dto';
 import UpdateProductDto from './dtos/update-product-dto';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 export class CustomProductValidationPipe implements PipeTransform<any> {
   // Custom Pipe cx có thể truy cập Request object
@@ -35,7 +36,7 @@ export class CustomProductValidationPipe implements PipeTransform<any> {
     // Metadata: Thông tin về dữ liệu đầu vào (loại dữ liệu, vị trí dữ liệu,...)
     console.log('Custom Product ValidationPipe:', metadata);
 
-    // ✅ Lấy param từ request (vd: /products/:id)
+    // Lấy param từ request (vd: /products/:id)
     const id = (this.request as any)?.params?.id;
     console.log('Request ID Param:', id);
 
@@ -46,7 +47,7 @@ export class CustomProductValidationPipe implements PipeTransform<any> {
       );
     }
 
-    // ✅ Nếu hợp lệ → trả về value (sẽ truyền vào controller)
+    // Nếu hợp lệ → trả về value (sẽ truyền vào controller)
     return value;
   }
 }
@@ -76,6 +77,7 @@ export class ProductsController {
   //   return this.productsService.findAll();
   // }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Req() req: Request & { user: string}) {
     console.log('Request Headers:', req.headers);
