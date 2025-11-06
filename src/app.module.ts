@@ -10,24 +10,30 @@ import { ProductsModule } from './modules/products/products.module';
 import { JwtUserModule } from './modules/jwt-user/jwt-user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LocalStrategy } from './passports/local.strategy';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
-    UserModule,
-    ProductsModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'kinhart822',
-      database: 'test',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'], // Danh sách các entity được ánh xạ
-      synchronize: true, // Auto-create/update tables based on entities (use with caution in production)
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
     }),
-    ProductsModule,
+    // TypeOrmModule.forRoot({
+    //   type: 'postgres',
+    //   host: 'localhost',
+    //   port: 5432,
+    //   username: 'postgres',
+    //   password: 'kinhart822',
+    //   database: 'test',
+    //   entities: [__dirname + '/**/*.entity{.ts,.js}'], // Danh sách các entity được ánh xạ
+    //   synchronize: true, // Auto-create/update tables based on entities (use with caution in production)
+    // }),
     JwtUserModule,
     AuthModule,
+    UserModule,
+    ProductsModule,
+    DatabaseModule,
   ],
   controllers: [AppController, UserController],
   providers: [AppService],

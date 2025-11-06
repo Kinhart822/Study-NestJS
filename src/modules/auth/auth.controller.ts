@@ -48,11 +48,11 @@ export class AuthController {
       throw new BadRequestException('Refresh Token is required');
     }
     const user = await this.authService.verifyRefreshToken(refreshToken);
-    console.log(user);
+    // console.log('Refresh ok' + user);
     if (!user){
       throw new BadRequestException('Invalid refresh token')
     }
-    // return this.authService.login(user);
+    return this.authService.login(user);
   }
 
   @UseGuards(JwtAuthGuard)

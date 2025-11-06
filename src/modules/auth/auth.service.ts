@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtUserService } from '../jwt-user/jwt-user.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly jwtUserService: JwtUserService,
   ) {}
@@ -21,7 +23,7 @@ export class AuthService {
       name: user.name,
     };
     const refresh_token = this.jwtService.sign(payload, {
-      expiresIn: '7d',
+      expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRED'),
     });
     this.jwtUserService.saveRefreshToken(refresh_token, user.id);
     return {

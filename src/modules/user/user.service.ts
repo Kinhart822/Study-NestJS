@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-// import { DatabaseService } from 'src/database/database.service';
 import { User } from '../../entities/user.entity';
 import { Repository } from 'typeorm/browser/repository/Repository.js';
 
@@ -13,16 +12,10 @@ import { Repository } from 'typeorm/browser/repository/Repository.js';
 //      Request: 1 instance cho mỗi request
 //      Transient: tạo mới instance mỗi khi được inject
 export class UserService {
-  // constructor(private readonly databaseService: DatabaseService) {}
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-
-  // getUsers(): number | string {
-  //   // return `This action returns all users`;
-  //   // return this.databaseService.findAll();
-  // }
 
   findAll(): Promise<User[]> {
     return this.userRepository.find();

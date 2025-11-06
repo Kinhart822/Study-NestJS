@@ -6,19 +6,31 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from 'src/passports/local.strategy';
 import { JwtStrategy } from 'src/passports/jwt.strategy';
-// import { JwtStrategy } from './strategies/jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   controllers: [AuthController],
   imports: [
+    ConfigModule,
     JwtUserModule,
     PassportModule,
-    JwtModule.register({
-      // Khóa bí mật để ký JWT
-      secret:
-        '45c0acfd9ccef2c7584eed3b6c0f5621a40b6e49324ae77125ffab7fea536ed6',
-      // Thời gian hết hạn của token
-      signOptions: { expiresIn: '1h' },
+    // JwtModule.register({
+    //   // Khóa bí mật để ký JWT
+    //   secret: process.env.JWT_SECRET,
+    //   // Thời gian hết hạn của token
+    //   signOptions: {
+    //     expiresIn: '1d',
+    //   },
+    // }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get('JWT_ACCESS_TOKEN_EXPIRED'),
+        },
+      }),
     }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
