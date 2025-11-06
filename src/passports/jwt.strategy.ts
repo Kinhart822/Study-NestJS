@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_SECRET as string,
       // configService.get('JWT_SECRET_KEY') 
       // // - Chưa hiểu sao lỗi
-    });
+    })
   }
 
   async validate(payload: any) {

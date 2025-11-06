@@ -6,14 +6,18 @@ import {
   Request,
   Get,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtUserService } from '../jwt-user/jwt-user.service';
 import { LocalAuthGuard } from 'src/guards/local-auth.guard';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { log } from 'console';
 
 @Controller('auth')
 export class AuthController {
+  // private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private readonly authService: AuthService,
     private readonly jwtUserService: JwtUserService,
@@ -44,13 +48,13 @@ export class AuthController {
 
   @Post('refresh-token')
   async refreshToken(@Body() { refreshToken }: { refreshToken: string }) {
-    if(!refreshToken){
+    if (!refreshToken) {
       throw new BadRequestException('Refresh Token is required');
     }
     const user = await this.authService.verifyRefreshToken(refreshToken);
     // console.log('Refresh ok' + user);
-    if (!user){
-      throw new BadRequestException('Invalid refresh token')
+    if (!user) {
+      throw new BadRequestException('Invalid refresh token');
     }
     return this.authService.login(user);
   }
@@ -59,6 +63,7 @@ export class AuthController {
   @Get('/me')
   getProfile(@Request() req) {
     console.log(req.user);
+    // this.logger.log("Meomeo");
     return req.user;
   }
 }

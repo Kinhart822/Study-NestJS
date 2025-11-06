@@ -1,14 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
 import { ValidationError } from 'class-validator/types/validation/ValidationError';
 import { LoggingMiddleware } from './middleware/logging/logging.middleware';
+import { AllExceptionFilter } from './exceptions/http-exception.filter';
+import { LoggerMiddleware } from './middleware/logger/logger.middleware';
+import { winstonLogger } from './logger/winston.logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: winstonLogger
+  });
 
   // Use Logging Middleware cho tất cả các route
   // app.use(new LoggingMiddleware().use);
+  app.use(new LoggerMiddleware().use)
+
+  // Use Global Filters
+  app.useGlobalFilters(new AllExceptionFilter())
 
   // Use Global Pipe for Validation
   app.useGlobalPipes(
@@ -26,6 +35,7 @@ async function bootstrap() {
       },
     }),
   );
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
