@@ -6,18 +6,21 @@ import { LoggingMiddleware } from './middleware/logging/logging.middleware';
 import { AllExceptionFilter } from './exceptions/http-exception.filter';
 import { LoggerMiddleware } from './middleware/logger/logger.middleware';
 import { winstonLogger } from './logger/winston.logger';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
+  initializeTransactionalContext();
+
   const app = await NestFactory.create(AppModule, {
-    logger: winstonLogger
+    logger: winstonLogger,
   });
 
   // Use Logging Middleware cho tất cả các route
   // app.use(new LoggingMiddleware().use);
-  app.use(new LoggerMiddleware().use)
+  app.use(new LoggerMiddleware().use);
 
   // Use Global Filters
-  app.useGlobalFilters(new AllExceptionFilter())
+  app.useGlobalFilters(new AllExceptionFilter());
 
   // Use Global Pipe for Validation
   app.useGlobalPipes(

@@ -1,35 +1,40 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { JwtUser } from './jwt-user.entity';
 
 @Entity()
-export class Product {
+export class Phone {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
-
-  @Column({ default: '' })
-  description: string;
-
-  @Column()
-  price: number;
+  @Column({
+    type: 'varchar',
+    length: 10,
+    unique: true,
+  })
+  phone: string;
 
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: Date;
+  createdDate: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
-  updatedAt: Date;
+  updatedDate: Date;
+
+  @OneToOne(() => JwtUser, (user) => user.phone)
+  jwtUser: JwtUser;
 }

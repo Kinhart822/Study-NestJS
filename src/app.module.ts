@@ -28,14 +28,14 @@ import { GuardModule } from './guards/guard.module';
     //   entities: [__dirname + '/**/*.entity{.ts,.js}'], // Danh sách các entity được ánh xạ
     //   synchronize: true, // Auto-create/update tables based on entities (use with caution in production)
     // }),
+    DatabaseModule,
     JwtUserModule,
     GuardModule,
     AuthModule,
     UserModule,
     ProductsModule,
-    DatabaseModule,
   ],
-  controllers: [AppController, UserController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
